@@ -1,0 +1,256 @@
+{
+  "HomeType": [
+    {
+      "homeId": "Small",
+      "x": 10,
+      "y": 5,
+      "z": 10
+    }
+  ],
+  "GridType": [
+    {
+      "gridId": 0,
+      "gridName": "Floor"
+    },
+    {
+      "gridId": 1,
+      "gridName": "Object"
+    }
+  ],
+  "ItemType": [
+    {
+      "ItemId": 0,
+      "gridId": 1,
+      "prefabName": "GZ_Arcade_01",
+      "categoryType": 0,
+      "priceType": 0,
+      "title": "게임기1",
+      "description": "게임기1게임기1게임기1",
+      "slug": "1",
+      "stackable": true,
+      "capacity": 99
+    },
+    {
+      "ItemId": 1,
+      "gridId": 1,
+      "prefabName": "GZ_Arcade_02",
+      "categoryType": 0,
+      "priceType": 0,
+      "title": "게임기2",
+      "description": "게임기2게임기2게임기2",
+      "slug": "2",
+      "stackable": true,
+      "capacity": 99
+    },
+    {
+      "ItemId": 2,
+      "gridId": 1,
+      "prefabName": "GZ_Arcade_03",
+      "categoryType": 0,
+      "priceType": 0,
+      "title": "게임기3",
+      "description": "게임기3게임기3게임기3",
+      "slug": "3",
+      "stackable": true,
+      "capacity": 99
+    },
+    {
+      "ItemId": 3,
+      "gridId": 1,
+      "prefabName": "GZ_Basketball_01",
+      "categoryType": 0,
+      "priceType": 0,
+      "title": "농구골대",
+      "description": "농구골대농구골대",
+      "slug": "4",
+      "stackable": true,
+      "capacity": 99
+    },
+    {
+      "ItemId": 4,
+      "gridId": 1,
+      "prefabName": "GZ_Chair_01",
+      "categoryType": 1,
+      "priceType": 0,
+      "title": "의자1",
+      "description": "의자1의자1",
+      "slug": "5",
+      "stackable": true,
+      "capacity": 99
+    },
+    {
+      "ItemId": 5,
+      "gridId": 1,
+      "prefabName": "GZ_Chair_02",
+      "categoryType": 1,
+      "priceType": 0,
+      "title": "의자2",
+      "description": "의자2의자2",
+      "slug": "6",
+      "stackable": true,
+      "capacity": 99
+    },
+    {
+      "ItemId": 6,
+      "gridId": 1,
+      "prefabName": "GZ_Table_01",
+      "categoryType": 1,
+      "priceType": 0,
+      "title": "테이블1",
+      "description": "테이블1테이블1",
+      "slug": "7",
+      "stackable": true,
+      "capacity": 99
+    },
+    {
+      "ItemId": 7,
+      "gridId": 1,
+      "prefabName": "GZ_Table_02",
+      "categoryType": 1,
+      "priceType": 0,
+      "title": "테이블2",
+      "description": "테이블2테이블2",
+      "slug": "8",
+      "stackable": true,
+      "capacity": 99
+    },
+    {
+      "ItemId": 8,
+      "gridId": 1,
+      "prefabName": "GZ_Vending_01",
+      "categoryType": 2,
+      "priceType": 0,
+      "title": "벤딩1",
+      "description": "벤딩1벤딩1",
+      "slug": "9",
+      "stackable": true,
+      "capacity": 99
+    },
+    {
+      "ItemId": 9,
+      "gridId": 1,
+      "prefabName": "GZ_Vending_02",
+      "categoryType": 2,
+      "priceType": 0,
+      "title": "벤딩2",
+      "description": "벤딩2벤딩2",
+      "slug": "10",
+      "stackable": true,
+      "capacity": 99
+    },
+    {
+      "ItemId": 10,
+      "gridId": 1,
+      "prefabName": "GZ_Vending_03",
+      "categoryType": 2,
+      "priceType": 0,
+      "title": "벤딩3",
+      "description": "벤딩3벤딩3",
+      "slug": "11",
+      "stackable": true,
+      "capacity": 99
+    },
+    {
+      "ItemId": 11,
+      "gridId": 1,
+      "prefabName": "GZ_Vending_04",
+      "categoryType": 2,
+      "priceType": 0,
+      "title": "벤딩4",
+      "description": "벤딩4벤딩4",
+      "slug": "12",
+      "stackable": true,
+      "capacity": 99
+    },
+    {
+      "ItemId": 12,
+      "gridId": 0,
+      "prefabName": "GZ_footboard_01",
+      "categoryType": 3,
+      "priceType": 0,
+      "title": "노랑발판",
+      "description": "노랑발판이다",
+      "slug": "12",
+      "stackable": true,
+      "capacity": 99
+    },
+    {
+      "ItemId": 13,
+      "gridId": 0,
+      "prefabName": "GZ_footboard_02",
+      "categoryType": 3,
+      "priceType": 0,
+      "title": "초록발판",
+      "description": "초록발판이다",
+      "slug": "12",
+      "stackable": true,
+      "capacity": 99
+    }
+  ],
+  "InvenItem": [
+    {
+      "itemId": 0,
+      "stack": 10
+    },
+    {
+      "itemId": 1,
+      "stack": 10
+    },
+    {
+      "itemId": 2,
+      "stack": 10
+    },
+    {
+      "itemId": 3,
+      "stack": 10
+    },
+    {
+      "itemId": 4,
+      "stack": 10
+    },
+    {
+      "itemId": 5,
+      "stack": 10
+    },
+    {
+      "itemId": 6,
+      "stack": 10
+    },
+    {
+      "itemId": 7,
+      "stack": 10
+    },
+    {
+      "itemId": 8,
+      "stack": 10
+    },
+    {
+      "itemId": 9,
+      "stack": 10
+    },
+    {
+      "itemId": 10,
+      "stack": 10
+    },
+    {
+      "itemId": 11,
+      "stack": 10
+    },
+    {
+      "itemId": 12,
+      "stack": 10
+    },
+    {
+      "itemId": 13,
+      "stack": 10
+    }
+  ],
+  "RoomItem": [
+    {
+      "itemId": 0,
+      "x": 5,
+      "y": 10,
+      "rotate": 90
+    }
+  ]
+}
