@@ -33,7 +33,7 @@ MonoBehaviour:
   ObjectPlaceableMaterial: {fileID: 2100000, guid: 88a07ff04c543b5449a860a99c97f1c4, type: 2}
   ObjectUnPlaceableMaterial: {fileID: 2100000, guid: 51766433b6f9f2248a03498e64169847, type: 2}
   DefaultAlignment: 0
-  InitialPlacementCellIndex: {x: 12, y: 8}
+  InitialPlacementCellIndex: {x: 18, y: 12}
   PlatformGridInputsDefinitionMappings:
   - Name: Android
     RuntimePlatform: 11

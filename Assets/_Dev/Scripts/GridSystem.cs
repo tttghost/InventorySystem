@@ -269,9 +269,10 @@ public class GridSystem : MonoBehaviour
             {
                 return;
             }
-            Vector3 mousePosition = Input.mousePosition;
-            Ray ray = Camera.main.ScreenPointToRay(mousePosition, Camera.MonoOrStereoscopicEye.Mono);
-            if (Physics.Raycast(ray, out RaycastHit hit))
+            int layerMask = -1 - (1 << LayerMask.NameToLayer("CinemachineCollider"));
+            //layerMask = ~layerMask;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition, Camera.MonoOrStereoscopicEye.Mono);
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
             {
                 if (hit.transform.GetComponent<GridHeightPositioner>() != null)
                 {

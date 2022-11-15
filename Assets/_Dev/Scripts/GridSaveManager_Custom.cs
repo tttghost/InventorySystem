@@ -99,7 +99,8 @@ namespace Hypertonic.GridPlacement.Example.BasicDemo
 
                 GameObject gridObject = Instantiate(prefab);
                 gridObject.transform.position = Vector3.right * 1000f; //±ôºýÀÓ ¹æÁö
-                                                                       // Set the rotation back to the saved rotation of the object
+
+                // Set the rotation back to the saved rotation of the object
                 gridObject.transform.localEulerAngles = Vector3.up * _gridObjectSaveData.rotation;
 
                 // Remove the "(Clone)" from instantiated name.
