@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Grid Settings_Object
   m_EditorClassIdentifier: 
   Key: Object
-  Width: 10
-  Height: 5
-  GridSizeRatio: {x: 2, y: 1}
-  AmountOfCellsX: 20
-  AmountOfCellsY: 10
+  Width: 12
+  Height: 8
+  GridSizeRatio: {x: 12, y: 8}
+  AmountOfCellsX: 36
+  AmountOfCellsY: 24
   GridPosition: {x: 0, y: 0.01, z: 0}
   GridRotation: 0
   ParentToGrid: 1
@@ -33,7 +33,7 @@ MonoBehaviour:
   ObjectPlaceableMaterial: {fileID: 2100000, guid: 88a07ff04c543b5449a860a99c97f1c4, type: 2}
   ObjectUnPlaceableMaterial: {fileID: 2100000, guid: 51766433b6f9f2248a03498e64169847, type: 2}
   DefaultAlignment: 0
-  InitialPlacementCellIndex: {x: 10, y: 5}
+  InitialPlacementCellIndex: {x: 12, y: 8}
   PlatformGridInputsDefinitionMappings:
   - Name: Android
     RuntimePlatform: 11
