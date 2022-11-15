@@ -228,14 +228,14 @@ public class GridSystem : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            Save();
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            Load();
-        }
+        //if (Input.GetKeyDown(KeyCode.Alpha9))
+        //{
+        //    Save();
+        //}
+        //if (Input.GetKeyDown(KeyCode.Alpha0))
+        //{
+        //    Load();
+        //}
 
         if (Input.GetKey(KeyCode.A))
         {
@@ -247,14 +247,14 @@ public class GridSystem : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.W))
         {
-            if (cameraPivotZ.transform.localPosition.z < 1f)
+            if (cameraPivotZ.transform.localPosition.z < 2f)
             {
                 cameraPivotZ.transform.Translate(Vector3.forward * zoomSpeed * Time.deltaTime);
             }
         }
         if (Input.GetKey(KeyCode.S))
         {
-            if (cameraPivotZ.transform.localPosition.z > -1f)
+            if (cameraPivotZ.transform.localPosition.z > -2f)
             {
                 cameraPivotZ.transform.Translate(-Vector3.forward * zoomSpeed * Time.deltaTime);
             }

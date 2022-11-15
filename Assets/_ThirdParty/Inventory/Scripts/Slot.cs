@@ -8,11 +8,11 @@ public class Slot : MonoBehaviour, IDropHandler
 {
 	public int slotId;
     public int itemId;
-	private Inventory inven;
+	private InventorySystem inven;
 
     private void Awake()
 	{
-		inven = GameObject.Find("InventorySystem").GetComponent<Inventory>();
+		inven = GameObject.Find("InventorySystem").GetComponent<InventorySystem>();
 	}
 
     /// <summary>

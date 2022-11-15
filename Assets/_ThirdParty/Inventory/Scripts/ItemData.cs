@@ -12,7 +12,7 @@ using UnityEngine.UI;
 public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler, IPointerUpHandler, IPointerClickHandler
 {
 
-    private Inventory inv;
+    private InventorySystem inv;
     private ItemDatabase database;
 
     public InvenItem invenItem { private set ; get; } //인벤토리
@@ -121,7 +121,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     void Awake()
     {
         database = ItemDatabase.instance;
-        inv = GameObject.Find("InventorySystem").GetComponent<Inventory>();
+        inv = GameObject.Find("InventorySystem").GetComponent<InventorySystem>();
         tooltip = inv.GetComponent<Tooltip>();
     }
 

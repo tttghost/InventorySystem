@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class Inventory : MonoBehaviour
+public class InventorySystem : MonoBehaviour
 {
     public GameObject inventoryItem;
     public GameObject inventorySlot;

@@ -4,23 +4,33 @@ using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
 {
-    public Inventory inventory;
+    public InventorySystem inventory;
     public GridSystem test_Grid;
 
     private IEnumerator Start()
     {
         yield return null;
-        Init();
+        Load();
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha5))
+        if (Input.GetKeyDown(KeyCode.Alpha9))
         {
-            Init();
+            Save();
         }
+        else if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            Load();
+        }
+
     }
 
-    private void Init()
+    private void Save()
+    {
+        test_Grid.Save();
+    }
+
+    private void Load()
     {
         ItemDatabase.instance.LoadDB(); //디비로드후
         inventory.Init(); //인벤토리 초기화
