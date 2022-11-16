@@ -21,27 +21,28 @@ public class Test_VirtualCamera : MonoBehaviour
         {
             SetData(-2);
         }
-        if (Input.GetKeyDown(KeyCode.PageUp))
+        if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             SideTop(eViewState.top);
             //Dolly_Offset(1);
         }
-        if (Input.GetKeyDown(KeyCode.PageDown))
+        if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             SideTop(eViewState.side);
             //Dolly_Offset(-1);
         }
         float v = Input.GetAxisRaw("Vertical");
         //ZoomInOut(v);
-
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            ZoomInOut(1);
-        }
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            ZoomInOut(-1);
-        }
+        float scrollWhell = Input.GetAxis("Mouse ScrollWheel");
+        ZoomInOut(scrollWhell * 30f);
+        //if (Input.GetKey(KeyCode.UpArrow))
+        //{
+        //    ZoomInOut(scrollWhell * 10f);
+        //}
+        //if (Input.GetKey(KeyCode.DownArrow))
+        //{
+        //    ZoomInOut(-1);
+        //}
 
         //Dolly_Path(v);
     }
