@@ -4,5 +4,9 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
-  m_configObjects: {}
+  m_Scenes:
+  - enabled: 1
+    path: Assets/_Dev/Scenes/Scene_Cinemachine.unity
+    guid: de5e9ea368c4bfb46ae2357e63a77c87
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: 9b370e06c5dc32b42a59a96259d5de2f, type: 2}

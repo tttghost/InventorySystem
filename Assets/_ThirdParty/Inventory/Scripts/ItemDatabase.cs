@@ -24,13 +24,29 @@ public class ItemDatabase : MonoBehaviour
         //LoadDB();
     }
 
+    string subPath = "InvenItem.json";
 
+    string GetPath(string subPath)
+    {
+        string oriPath = Path.Combine(Application.streamingAssetsPath, subPath);
+#if UNITY_ANDROID
+        WWW reader = new WWW(oriPath);
+        while (!reader.isDone) { }
+        var realPath = Application.persistentDataPath + "/db";
+        File.WriteAllBytes(realPath, reader.bytes);
+
+        oriPath = File.ReadAllText(realPath);
+#endif
+        return oriPath;
+    }
     /// <summary>
     /// 
     /// </summary>
-   public void LoadDB()
+    public void LoadDB()
     {
-        JObject jobj = (JObject)JsonConvert.DeserializeObject(File.ReadAllText(Application.dataPath + "/StreamingAssets/InvenItem.json"));
+        string path = GetPath(subPath);
+        JObject jobj = (JObject)JsonConvert.DeserializeObject(path);
+        //JObject jobj = (JObject)JsonConvert.DeserializeObject(File.ReadAllText(Application.dataPath + "/StreamingAssets/InvenItem.json"));
         foreach (var x in jobj)
         {
             string data = x.Value.ToString();

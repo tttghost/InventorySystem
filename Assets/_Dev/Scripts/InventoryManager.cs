@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
 {
-    public InventorySystem inventory;
-    public GridSystem test_Grid;
+    public InventorySystem inventorySystem;
+    public GridSystem gridSystem;
 
     private IEnumerator Start()
     {
@@ -27,30 +27,30 @@ public class InventoryManager : MonoBehaviour
 
     private void Save()
     {
-        test_Grid.Save();
+        gridSystem.Save();
     }
 
     private void Load()
     {
         ItemDatabase.instance.LoadDB(); //디비로드후
-        inventory.Init(); //인벤토리 초기화
-        test_Grid.Load(); //초기화된 인벤토리에서 그리드오브젝트만큼 제거
+        inventorySystem.Init(); //인벤토리 초기화
+        gridSystem.Load(); //초기화된 인벤토리에서 그리드오브젝트만큼 제거
     }
 
     private void OnEnable()
     {
-        test_Grid.InitRoomItem += inventory.InitInvenItem; //룸아이템, 인벤아이템 초기화 (인벤부터 개수 초기화 후 룸아이템개수만큼 차감하여 인벤표시)
+        gridSystem.InitRoomItem += inventorySystem.InitInvenItem; //룸아이템, 인벤아이템 초기화 (인벤부터 개수 초기화 후 룸아이템개수만큼 차감하여 인벤표시)
 
-        inventory.MinusInvenItem += test_Grid.PlusRoomItem; //인벤에서 아이템이 빠지면 룸에 아이템 추가
-        test_Grid.MinusRoomItem += inventory.PlusInvenItem; //룸에서 아이템이 빠지면 인벤에 아이템 추가
+        inventorySystem.MinusInvenItem += gridSystem.PlusRoomItem; //인벤에서 아이템이 빠지면 룸에 아이템 추가
+        gridSystem.MinusRoomItem += inventorySystem.PlusInvenItem; //룸에서 아이템이 빠지면 인벤에 아이템 추가
     }
 
     private void OnDisable()
     {
-        test_Grid.InitRoomItem -= inventory.InitInvenItem;
+        gridSystem.InitRoomItem -= inventorySystem.InitInvenItem;
 
-        inventory.MinusInvenItem -= test_Grid.PlusRoomItem;
-        test_Grid.MinusRoomItem += inventory.PlusInvenItem;
+        inventorySystem.MinusInvenItem -= gridSystem.PlusRoomItem;
+        gridSystem.MinusRoomItem += inventorySystem.PlusInvenItem;
     }
 
 }

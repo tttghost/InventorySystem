@@ -30,9 +30,6 @@ public class GridSystem : MonoBehaviour
     private bool isValid;
     public List<Texture2D> thumbnailList = new List<Texture2D>();
 
-    /// <summary>
-    /// 인벤시스템 구현하자..!!
-    /// </summary>
     private void Awake()
     {
         gridSaveManager = gameObject.AddComponent<GridSaveManager_Custom>();
@@ -61,12 +58,20 @@ public class GridSystem : MonoBehaviour
         GridManagerAccessor.GridManager.ConfirmPlacement();
     }
 
+    public enum eItemState
+    {
+        idle,
+        move,
+    }
+    public eItemState itemState;
+
     public void OnClick_MoveDown()
     {
         CurrentMethodName();
         inMove.raycastTarget = false;
         outMove.SetActive(false);
         cover.SetActive(false);
+        itemState = eItemState.move;
     }
     public void OnClick_MoveUp()
     {
@@ -74,7 +79,15 @@ public class GridSystem : MonoBehaviour
         inMove.raycastTarget = true;
         outMove.SetActive(true);
         cover.SetActive(true);
+        StartCoroutine(Co_Wait());
     }
+
+    IEnumerator Co_Wait()
+    {
+        yield return new WaitForEndOfFrame();
+        itemState = eItemState.idle;
+    }
+
     public void OnClick_TurnRight()
     {
         CurrentMethodName();
@@ -182,6 +195,22 @@ public class GridSystem : MonoBehaviour
         GridManagerAccessor.GridManager.OnPlacementValidated += GridManager_OnPlacementValidated;
     }
 
+    string subPath = "RoomItem.json";
+
+    string GetPath(string subPath)
+    {
+        string oriPath =  Path.Combine(Application.streamingAssetsPath, subPath);
+#if UNITY_ANDROID
+        WWW reader = new WWW(oriPath);
+        while (!reader.isDone) { }
+        var realPath = Application.persistentDataPath + "/db";
+        File.WriteAllBytes(realPath, reader.bytes);
+
+        oriPath = File.ReadAllText(realPath);
+#endif
+        return oriPath;
+    }
+
     public void Save()
     {
         Debug.Log(MethodBase.GetCurrentMethod().Name);
@@ -191,14 +220,19 @@ public class GridSystem : MonoBehaviour
     {
         Debug.Log(MethodBase.GetCurrentMethod().Name);
         pivot.transform.SetParent(null);
-        string path = Application.dataPath + "/StreamingAssets/RoomItem.json";
-        if (!File.Exists(path))
+        //string path = Application.dataPath + "/StreamingAssets/RoomItem.json";
+        string path = GetPath(subPath);
+        //if (!File.Exists(path))
+        //{
+        //    return;
+        //}
+        //string saveDataAsJson = path;
+        //string saveDataAsJson = PlayerPrefs.GetString("GRIDMANAGER");
+        _GridData _gridData = JsonUtility.FromJson<_GridData>(path);
+        if(_gridData==null)
         {
             return;
         }
-        string saveDataAsJson = File.ReadAllText(path);
-        //string saveDataAsJson = PlayerPrefs.GetString("GRIDMANAGER");
-        _GridData _gridData = JsonUtility.FromJson<_GridData>(saveDataAsJson);
         for (int i = 0; i < _gridData._saveDatas.Count; i++)
         {
             _SaveData _saveData = _gridData._saveDatas[i];
@@ -263,22 +297,31 @@ public class GridSystem : MonoBehaviour
         {
             return;
         }
-        if (Input.GetMouseButtonDown(0))
+        if (EventSystem.current.IsPointerOverGameObject())
         {
-            if(EventSystem.current.IsPointerOverGameObject())
+            return;
+        }
+        int layerMask = -1 - (1 << LayerMask.NameToLayer("CinemachineCollider"));
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition, Camera.MonoOrStereoscopicEye.Mono);
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
+        {
+            if (hit.transform.GetComponent<GridHeightPositioner>() != null)
             {
-                return;
-            }
-            int layerMask = -1 - (1 << LayerMask.NameToLayer("CinemachineCollider"));
-            //layerMask = ~layerMask;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition, Camera.MonoOrStereoscopicEye.Mono);
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
-            {
-                if (hit.transform.GetComponent<GridHeightPositioner>() != null)
+                if (Input.GetMouseButtonDown(0))
                 {
-                    SelectRoomItem(hit.transform.gameObject);
+                    selectObj = hit.transform.gameObject;
+                }
+                if (Input.GetMouseButtonUp(0))
+                {
+                    if (selectObj == hit.transform.gameObject)
+                    {
+                        SelectRoomItem(hit.transform.gameObject);
+                    }
+                    selectObj = null;
                 }
             }
         }
     }
+
+    private GameObject selectObj;
 }

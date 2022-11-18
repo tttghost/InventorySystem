@@ -1,18 +1,77 @@
 using Cinemachine;
+using Lean.Touch;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Test_VirtualCamera : MonoBehaviour
 {
     public CinemachineVirtualCamera[] cinemachineVirtualCamera;
     public Transform dollyPath;
 
+    public InventoryManager inventoryManager;
+
     public int idx = 0;
+    private void Start()
+    {
+        LeanTouch.OnFingerSwipe += LeanTouch_OnFingerSwipe;
+        LeanTouch.OnGesture += LeanTouch_OnGesture;
+        LeanTouch.OnFingerExpired += LeanTouch_OnFingerExpired;
+        LeanTouch.OnFingerDown += LeanTouch_OnFingerDown;
+        LeanTouch.OnFingerUp += LeanTouch_OnFingerUp;
+    }
+
+    private void LeanTouch_OnFingerUp(LeanFinger obj)
+    {
+        fingerCnt--;
+        if (fingerCnt == 0)
+        {
+            isPinch = false;
+        }
+    }
+
+    int fingerCnt = 0;
+    bool isPinch = false;
+    private void LeanTouch_OnFingerDown(LeanFinger obj)
+    {
+        fingerCnt++;
+        if(fingerCnt == 2)
+        {
+            isPinch = true;
+        }
+    }
+
+    private void LeanTouch_OnFingerExpired(LeanFinger obj)
+    {
+        //fingerCnt = 0;
+        //isPinch = false;
+    }
+
+    private void LeanTouch_OnGesture(List<LeanFinger> obj)
+    {
+    }
+
+    private void LeanTouch_OnFingerSwipe(LeanFinger obj)
+    {
+    }
+
+    private bool IsParallel()
+    {
+        float ff = Mathf.Abs(LeanGesture.GetTwistDegrees());
+
+        if (ff > 10f || ff == 0f) // 패러럴
+        {
+            return true;
+        }
+        return false;
+    }
 
     private void Update()
     {
+
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             SetData(2);
@@ -23,18 +82,18 @@ public class Test_VirtualCamera : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            SideTop(eViewState.top);
+            SideTop(-1);
             //Dolly_Offset(1);
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            SideTop(eViewState.side);
+            SideTop(1);
             //Dolly_Offset(-1);
         }
-        float v = Input.GetAxisRaw("Vertical");
+        //float v = Input.GetAxisRaw("Vertical");
         //ZoomInOut(v);
-        float scrollWhell = Input.GetAxis("Mouse ScrollWheel");
-        ZoomInOut(scrollWhell * 30f);
+        //float scrollWhell = Input.GetAxis("Mouse ScrollWheel");
+        //ZoomInOut(scrollWhell * 30f);
         //if (Input.GetKey(KeyCode.UpArrow))
         //{
         //    ZoomInOut(scrollWhell * 10f);
@@ -47,8 +106,23 @@ public class Test_VirtualCamera : MonoBehaviour
         //Dolly_Path(v);
     }
 
-    private void SetData(int val)
+    private void OnGUI()
     {
+        
+        GUI.Label(new Rect(0,500,1000,100), "LeanTouch.Fingers.Count : " + LeanTouch.Fingers.Count);
+    }
+
+    public void SetData(int val)
+    {
+        if(inventoryManager.gridSystem.itemState == GridSystem.eItemState.move)
+        {
+            return;
+        }
+        if(isPinch)
+        {
+            return;
+        }
+
         Dolly_m_PathPosition(val);
         //SetRotate(val);
         //SetPriority(val);
@@ -66,36 +140,83 @@ public class Test_VirtualCamera : MonoBehaviour
         dollyPath.localScale = Vector3.one * y;
     }
 
-    enum eViewState
-    {
-        side,
-        top,
-    }
-
-    eViewState viewState = eViewState.side;
+    public int viewState = 1;
 
     float LerpInverseLerp(float fromA, float fromB, float toA, float toB, float val)
     {
         return Mathf.Lerp(toA, toB, Mathf.InverseLerp(fromA, fromB, val));
     }
-
-    private void SideTop(eViewState viewState)
+    public static T String2Enum<T>(string _str)
     {
-        if (this.viewState == viewState)
+        try
+        {
+            return (T)Enum.Parse(typeof(T), _str);
+        }
+        catch
+        {
+            return (T)Enum.Parse(typeof(T), "none");
+        }
+    }
+
+    public void OnParallel(Vector2 vector2)
+    {
+        StartCoroutine(Co_OnParallel(vector2));
+    }
+
+    IEnumerator Co_OnParallel(Vector2 vector2)
+    {
+        CinemachineCameraOffset cinemachineCameraOffset = cinemachineVirtualCamera[0].GetComponent<CinemachineCameraOffset>();
+        Vector3 ori = cinemachineCameraOffset.m_Offset;
+        Vector3 target;
+        if (vector2.x < 0)
+        {
+            target = ori + Vector3.left;
+        }
+        else
+        {
+            target = ori + Vector3.right;
+        }
+
+        float curTime = 0f;
+        float durTime = 0.25f;
+        while (curTime < 1f)
+        {
+            curTime += Time.deltaTime / durTime;
+            cinemachineCameraOffset.m_Offset = Vector3.Lerp(ori, target, curTime);
+            yield return null;
+        }
+    }
+
+
+    public void SideTop(int viewState)
+    {
+
+        if (inventoryManager.gridSystem.itemState == GridSystem.eItemState.move)
+        {   
+            return;
+        }
+        int newVal = Mathf.Clamp(this.viewState + viewState, 0, 2);
+        if(this.viewState == newVal)
         {
             return;
         }
-        this.viewState = viewState;
-        switch (viewState)
+        this.viewState = newVal;
+        var v = GetCinemachineTrackedDolly();
+        switch (this.viewState)
         {
-            case eViewState.top:
-
-                GetCinemachineTrackedDolly().m_PathOffset = Vector3.up * LerpInverseLerp(0.01f, 2f, 0f, 12f, dollyPath.localScale.y);
-                dollyPath.localScale = Vector3.one * 0.01f;
+            case 0:
+                v.m_PathOffset = Vector3.up * 0f;
                 break;
-            case eViewState.side:
-                dollyPath.localScale = Vector3.one * LerpInverseLerp(0f, 12f, 0.01f, 2f, GetCinemachineTrackedDolly().m_PathOffset.y);
-                GetCinemachineTrackedDolly().m_PathOffset = Vector3.up * 1.5f;
+            case 1:
+                if(viewState == -1)
+                {
+                    dollyPath.localScale = Vector3.one * LerpInverseLerp(0f, 12f, 0.01f, 2f, v.m_PathOffset.y);
+                }
+                v.m_PathOffset = Vector3.up * 6f;
+                break;
+            case 2:
+                v.m_PathOffset = Vector3.up * LerpInverseLerp(0.01f, 2f, 0f, 12f, dollyPath.localScale.y);
+                dollyPath.localScale = Vector3.one * 0.01f;
                 break;
             default:
                 break;
@@ -105,15 +226,21 @@ public class Test_VirtualCamera : MonoBehaviour
     //dollyTrack 스케일 side : 
     //cinemachine 높이 side : 
 
-    private void ZoomInOut(float val)
+    public void ZoomInOut(float val)
     {
+        //if(IsParallel())
+        //{
+        //    return;
+        //}
+        Debug.Log("ZoomInOut: " + val);
         switch (viewState)
         {
-            case eViewState.side:
-                Dolly_Path(val);
+            case 0:
+            case 1:
+                Dolly_Path((val - 1) * 100f);
                 break;
-            case eViewState.top:
-                Dolly_Offset(-val);
+            case 2:
+                Dolly_Offset(-(val - 1) * 100f);
                 break;
             default:
                 break;
