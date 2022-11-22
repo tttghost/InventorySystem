@@ -9,7 +9,7 @@ using UnityEngine.UI;
 /// <summary>
 /// 아이템에 달아주는 클래스
 /// </summary>
-public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler, IPointerUpHandler, IPointerClickHandler
+public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerDownHandler, IPointerExitHandler, IPointerUpHandler, IPointerClickHandler, IPointerEnterHandler
 {
 
     private InventorySystem inv;

@@ -7957,6 +7957,7 @@ GameObject:
   - component: {fileID: 1812807344}
   - component: {fileID: 1812807343}
   - component: {fileID: 1812807342}
+  - component: {fileID: 1812807345}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -8053,6 +8054,20 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1812807345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812807340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 244a7cf331c5d404684bdcde9fceaced, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  touchInputController: {fileID: 1146819999}
+  rt: {fileID: 1923124831}
 --- !u!1 &1814186555
 GameObject:
   m_ObjectHideFlags: 0

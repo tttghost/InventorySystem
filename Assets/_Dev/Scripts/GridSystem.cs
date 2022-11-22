@@ -328,7 +328,6 @@ public class GridSystem : MonoBehaviour
         }
         //if (EventSystem.current.IsPointerOverGameObject())
         //{
-        //    Debug.Log("22");
         //    return;
         //}
         int layerMask = -1 - (1 << LayerMask.NameToLayer("CinemachineCollider"));
