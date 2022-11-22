@@ -22,6 +22,16 @@ public class Test_VirtualCamera : MonoBehaviour
         LeanTouch.OnFingerExpired += LeanTouch_OnFingerExpired;
         LeanTouch.OnFingerDown += LeanTouch_OnFingerDown;
         LeanTouch.OnFingerUp += LeanTouch_OnFingerUp;
+        LeanTouch.OnFingerSwipe += (a) => { };
+        LeanTouch.OnFingerUpdate += LeanTouch_OnFingerUpdate;
+    }
+
+    private void LeanTouch_OnFingerUpdate(LeanFinger obj)
+    {
+        if(obj.Swipe)
+        {
+            Debug.Log("aa");
+        }
     }
 
     private void LeanTouch_OnFingerUp(LeanFinger obj)
@@ -38,7 +48,7 @@ public class Test_VirtualCamera : MonoBehaviour
     private void LeanTouch_OnFingerDown(LeanFinger obj)
     {
         fingerCnt++;
-        if(fingerCnt == 2)
+        if (fingerCnt == 2)
         {
             isPinch = true;
         }
@@ -71,7 +81,6 @@ public class Test_VirtualCamera : MonoBehaviour
 
     private void Update()
     {
-
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             SetData(2);
@@ -90,6 +99,8 @@ public class Test_VirtualCamera : MonoBehaviour
             SideTop(1);
             //Dolly_Offset(-1);
         }
+
+        
         //float v = Input.GetAxisRaw("Vertical");
         //ZoomInOut(v);
         //float scrollWhell = Input.GetAxis("Mouse ScrollWheel");
@@ -108,17 +119,17 @@ public class Test_VirtualCamera : MonoBehaviour
 
     private void OnGUI()
     {
-        
-        GUI.Label(new Rect(0,500,1000,100), "LeanTouch.Fingers.Count : " + LeanTouch.Fingers.Count);
+
+        GUI.Label(new Rect(0, 500, 1000, 100), "LeanTouch.Fingers.Count : " + LeanTouch.Fingers.Count);
     }
 
     public void SetData(int val)
     {
-        if(inventoryManager.gridSystem.itemState == GridSystem.eItemState.move)
+        if (inventoryManager.gridSystem.itemState == GridSystem.eItemState.move)
         {
             return;
         }
-        if(isPinch)
+        if (isPinch)
         {
             return;
         }
@@ -192,11 +203,11 @@ public class Test_VirtualCamera : MonoBehaviour
     {
 
         if (inventoryManager.gridSystem.itemState == GridSystem.eItemState.move)
-        {   
+        {
             return;
         }
         int newVal = Mathf.Clamp(this.viewState + viewState, 0, 2);
-        if(this.viewState == newVal)
+        if (this.viewState == newVal)
         {
             return;
         }
@@ -208,7 +219,7 @@ public class Test_VirtualCamera : MonoBehaviour
                 v.m_PathOffset = Vector3.up * 0f;
                 break;
             case 1:
-                if(viewState == -1)
+                if (viewState == -1)
                 {
                     dollyPath.localScale = Vector3.one * LerpInverseLerp(0f, 12f, 0.01f, 2f, v.m_PathOffset.y);
                 }

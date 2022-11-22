@@ -43,6 +43,8 @@ public class InventoryManager : MonoBehaviour
 
         inventorySystem.MinusInvenItem += gridSystem.PlusRoomItem; //인벤에서 아이템이 빠지면 룸에 아이템 추가
         gridSystem.MinusRoomItem += inventorySystem.PlusInvenItem; //룸에서 아이템이 빠지면 인벤에 아이템 추가
+
+        gridSystem.invenLock += inventorySystem.SetInvenLock;
     }
 
     private void OnDisable()
@@ -51,6 +53,8 @@ public class InventoryManager : MonoBehaviour
 
         inventorySystem.MinusInvenItem -= gridSystem.PlusRoomItem;
         gridSystem.MinusRoomItem += inventorySystem.PlusInvenItem;
+
+        gridSystem.invenLock -= inventorySystem.SetInvenLock;
     }
 
 }

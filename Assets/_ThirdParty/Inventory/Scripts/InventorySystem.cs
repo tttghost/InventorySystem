@@ -15,6 +15,13 @@ public class InventorySystem : MonoBehaviour
     public delegate void InvenItem(int idx);
     public InvenItem MinusInvenItem; //룸아이템 생성
 
+    public Image img_Block;
+
+    public void SetInvenLock(bool bLock)
+    {
+        img_Block.enabled = bLock;
+    }
+
     /// <summary>
     /// 토글 초기화
     /// </summary>

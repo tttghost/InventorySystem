@@ -1,3 +1,4 @@
+using BitBenderGames;
 using Hypertonic.GridPlacement;
 using Hypertonic.GridPlacement.CustomSizing;
 using Hypertonic.GridPlacement.Example.BasicDemo;
@@ -23,11 +24,12 @@ public class GridSystem : MonoBehaviour
 
     private GameObject curObj;
     private GridSaveManager_Custom gridSaveManager;
-    public GameObject cameraRotateY;
-    public GameObject cameraPivotZ;
+    //public GameObject cameraRotateY;
+    //public GameObject cameraPivotZ;
     public float rotateSpeed;
     public float zoomSpeed;
     private bool isValid;
+
     public List<Texture2D> thumbnailList = new List<Texture2D>();
 
     private void Awake()
@@ -45,6 +47,9 @@ public class GridSystem : MonoBehaviour
         this.isValid = isValid;
     }
 
+    /// <summary>
+    /// 설치완료
+    /// </summary>
     public void OnClick_Cover()
     {
         CurrentMethodName();
@@ -56,6 +61,8 @@ public class GridSystem : MonoBehaviour
         pivot.SetActive(false);
         curObj = null;
         GridManagerAccessor.GridManager.ConfirmPlacement();
+
+        invenLock?.Invoke(false);
     }
 
     public enum eItemState
@@ -72,6 +79,7 @@ public class GridSystem : MonoBehaviour
         outMove.SetActive(false);
         cover.SetActive(false);
         itemState = eItemState.move;
+        touchInputController.enabled = false;
     }
     public void OnClick_MoveUp()
     {
@@ -79,6 +87,7 @@ public class GridSystem : MonoBehaviour
         inMove.raycastTarget = true;
         outMove.SetActive(true);
         cover.SetActive(true);
+        touchInputController.enabled = true;
         StartCoroutine(Co_Wait());
     }
 
@@ -110,6 +119,7 @@ public class GridSystem : MonoBehaviour
         curObj = null;
         pivot.transform.SetParent(null);
         GridManagerAccessor.GridManager.CancelPlacement();
+        invenLock?.Invoke(false);
     }
 
     private void CurrentMethodName()
@@ -162,6 +172,7 @@ public class GridSystem : MonoBehaviour
     /// <param name="obj"></param>
     public void SelectRoomItem(GameObject obj)
     {
+        invenLock?.Invoke(true);
         cover.SetActive(true);
 
         pivot.SetActive(true);
@@ -255,6 +266,24 @@ public class GridSystem : MonoBehaviour
         }
     }
 
+    public Transform cameraPivot;
+    public void SetRotate(int val)
+    {
+        StartCoroutine(Co_Rotate(val));
+    }
+
+    IEnumerator Co_Rotate(int val)
+    {
+        float curTime = 0f;
+        float durTime = .5f;
+        while (curTime < 1f)
+        {
+            curTime += Time.deltaTime / durTime;
+            cameraPivot.Rotate(Vector3.up * 90f * val * Time.deltaTime / durTime);
+            yield return null;
+        }
+    }
+
     public delegate void RoomItem(int idx);
 
     public RoomItem InitRoomItem; //룸아이템 초기셋업
@@ -271,36 +300,37 @@ public class GridSystem : MonoBehaviour
         //    Load();
         //}
 
-        if (Input.GetKey(KeyCode.A))
-        {
-            cameraRotateY.transform.Rotate(Vector3.up * 360f * rotateSpeed * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            cameraRotateY.transform.Rotate(Vector3.up * 360f * -rotateSpeed * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.W))
-        {
-            if (cameraPivotZ.transform.localPosition.z < 2f)
-            {
-                cameraPivotZ.transform.Translate(Vector3.forward * zoomSpeed * Time.deltaTime);
-            }
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            if (cameraPivotZ.transform.localPosition.z > -2f)
-            {
-                cameraPivotZ.transform.Translate(-Vector3.forward * zoomSpeed * Time.deltaTime);
-            }
-        }
+        //if (Input.GetKey(KeyCode.A))
+        //{
+        //    cameraRotateY.transform.Rotate(Vector3.up * 360f * rotateSpeed * Time.deltaTime);
+        //}
+        //if (Input.GetKey(KeyCode.D))
+        //{
+        //    cameraRotateY.transform.Rotate(Vector3.up * 360f * -rotateSpeed * Time.deltaTime);
+        //}
+        //if (Input.GetKey(KeyCode.W))
+        //{
+        //    if (cameraPivotZ.transform.localPosition.z < 2f)
+        //    {
+        //        cameraPivotZ.transform.Translate(Vector3.forward * zoomSpeed * Time.deltaTime);
+        //    }
+        //}
+        //if (Input.GetKey(KeyCode.S))
+        //{
+        //    if (cameraPivotZ.transform.localPosition.z > -2f)
+        //    {
+        //        cameraPivotZ.transform.Translate(-Vector3.forward * zoomSpeed * Time.deltaTime);
+        //    }
+        //}
         if (curObj != null)
         {
             return;
         }
-        if (EventSystem.current.IsPointerOverGameObject())
-        {
-            return;
-        }
+        //if (EventSystem.current.IsPointerOverGameObject())
+        //{
+        //    Debug.Log("22");
+        //    return;
+        //}
         int layerMask = -1 - (1 << LayerMask.NameToLayer("CinemachineCollider"));
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition, Camera.MonoOrStereoscopicEye.Mono);
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
@@ -322,6 +352,10 @@ public class GridSystem : MonoBehaviour
             }
         }
     }
+    public delegate void InvenLock(bool bLock);
 
+    public InvenLock invenLock;
+
+    public TouchInputController touchInputController;
     private GameObject selectObj;
 }
