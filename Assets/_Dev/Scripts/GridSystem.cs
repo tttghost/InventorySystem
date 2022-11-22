@@ -32,6 +32,7 @@ public class GridSystem : MonoBehaviour
 
     public List<Texture2D> thumbnailList = new List<Texture2D>();
 
+    public Material mat_Ghost;
     private void Awake()
     {
         gridSaveManager = gameObject.AddComponent<GridSaveManager_Custom>();
@@ -72,6 +73,10 @@ public class GridSystem : MonoBehaviour
     }
     public eItemState itemState;
 
+
+    /// <summary>
+    /// 오브젝트 이동 시작
+    /// </summary>
     public void OnClick_MoveDown()
     {
         CurrentMethodName();
@@ -80,7 +85,25 @@ public class GridSystem : MonoBehaviour
         cover.SetActive(false);
         itemState = eItemState.move;
         touchInputController.enabled = false;
+        if (curObj.TryGetComponent(out Animation animation))
+        {
+            animation.enabled = true;
+            
+            ghostObj = new GameObject();
+            ghostObj.transform.SetParent(curObj.transform.parent);
+            ghostObj.transform.localPosition = Vector3.zero;
+
+            var mesh = ghostObj.AddComponent<MeshFilter>();
+            mesh.mesh = curObj.GetComponent<MeshFilter>().mesh;
+
+            var renderer = ghostObj.AddComponent<MeshRenderer>();
+            renderer.material = mat_Ghost;
+        }
     }
+    GameObject ghostObj;
+    /// <summary>
+    /// 오브젝트 이동 끝
+    /// </summary>
     public void OnClick_MoveUp()
     {
         CurrentMethodName();
@@ -89,6 +112,12 @@ public class GridSystem : MonoBehaviour
         cover.SetActive(true);
         touchInputController.enabled = true;
         StartCoroutine(Co_Wait());
+        if (curObj.TryGetComponent(out Animation animation))
+        {
+            animation.enabled = false;
+            curObj.transform.position = new Vector3(curObj.transform.position.x, 0f, curObj.transform.position.z);
+            Destroy(ghostObj);
+        }
     }
 
     IEnumerator Co_Wait()
@@ -117,7 +146,7 @@ public class GridSystem : MonoBehaviour
         cover.SetActive(false);
         pivot.SetActive(false);
         curObj = null;
-        pivot.transform.SetParent(null);
+        //pivot.transform.SetParent(null);
         GridManagerAccessor.GridManager.CancelPlacement();
         invenLock?.Invoke(false);
     }
@@ -176,8 +205,8 @@ public class GridSystem : MonoBehaviour
         cover.SetActive(true);
 
         pivot.SetActive(true);
-        pivot.transform.SetParent(obj.transform);
-        pivot.transform.localPosition = Vector3.zero;
+        //pivot.transform.SetParent(obj.transform);
+        //pivot.transform.localPosition = Vector3.zero;
 
         if (obj.TryGetComponent(out GridObjectInfo objectInfo))
         {
@@ -230,7 +259,7 @@ public class GridSystem : MonoBehaviour
     public void Load()
     {
         Debug.Log(MethodBase.GetCurrentMethod().Name);
-        pivot.transform.SetParent(null);
+        //pivot.transform.SetParent(null);
         //string path = Application.dataPath + "/StreamingAssets/RoomItem.json";
         string path = GetPath(subPath);
         //if (!File.Exists(path))
@@ -291,6 +320,11 @@ public class GridSystem : MonoBehaviour
 
     private void Update()
     {
+        if (curObj != null)
+        {
+            pivot.transform.position = new Vector3(curObj.transform.position.x, 0f, curObj.transform.position.z);
+        }
+
         //if (Input.GetKeyDown(KeyCode.Alpha9))
         //{
         //    Save();
