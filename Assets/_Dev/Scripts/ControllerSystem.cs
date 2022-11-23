@@ -7,18 +7,27 @@ using UnityEngine.UI;
 
 public class ControllerSystem : MonoBehaviour
 {
-    public TouchInputController touchInputController;
-    public RectTransform rt; 
+    private bool isPanelPressed = false;
+
+    public RectTransform target;
+
+    public delegate void BoolParam(bool b);
+    public BoolParam handlerPanelPressed;
+
+    private void Start()
+    {
+        target = target == null ? (RectTransform)transform : target;
+    }
 
     private void Update()
     {
-        if(Input.GetMouseButtonDown(0) && IsMouseOverPanel(rt))
+        if (Input.GetMouseButtonDown(0) && !IsMouseOverPanel(target))
         {
-            touchInputController.enabled = false;
+            handlerPanelPressed?.Invoke(isPanelPressed = true);
         }
-        else if(Input.GetMouseButtonUp(0) && !touchInputController.enabled)
+        else if(Input.GetMouseButtonUp(0) && isPanelPressed)
         {
-            touchInputController.enabled = true;
+            handlerPanelPressed?.Invoke(isPanelPressed = false);
         }
 
     }
@@ -26,7 +35,7 @@ public class ControllerSystem : MonoBehaviour
     /// <summary>
     /// 마우스가 패널위에 있는지 체크
     /// </summary>
-    bool IsMouseOverPanel(RectTransform rt)
+    private bool IsMouseOverPanel(RectTransform rt)
     {
         return RectTransformUtility.RectangleContainsScreenPoint(rt, Input.mousePosition);
     }
@@ -34,7 +43,7 @@ public class ControllerSystem : MonoBehaviour
     /// <summary>
     /// 그래픽레이캐스트 레이를 쏴서 UI오브젝트 검출
     /// </summary>
-    bool IsGraphicRaycast()
+    private bool IsGraphicRaycast()
     {
         GraphicRaycaster gr = GetComponent<GraphicRaycaster>();
         var ped = new PointerEventData(null);

@@ -17,7 +17,7 @@ public class InventorySystem : MonoBehaviour
     public Image            img_Block;
     
     public delegate void InvenItemHandler(int idx);
-    public InvenItemHandler MinusInvenItem; //룸아이템 생성
+    public InvenItemHandler handlerPlusRoomItem; //룸아이템 생성
 
     public void OnInvenLock(bool bLock)
     {
@@ -86,6 +86,7 @@ public class InventorySystem : MonoBehaviour
     private void Awake()
     {
         tooltip = gameObject.AddComponent<Tooltip>();
+        
     }
 
     /// <summary>
@@ -99,7 +100,7 @@ public class InventorySystem : MonoBehaviour
     /// <summary>
     /// 데이터 초기화
     /// </summary>
-    void ClearData()
+    private void ClearData()
     {
         foreach (var item in itemDataList)
         {

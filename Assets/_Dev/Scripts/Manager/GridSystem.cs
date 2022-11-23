@@ -15,38 +15,34 @@ public class GridSystem : MonoBehaviour
 
     #region 변수
     private GridSaveManager_Custom  gridSaveManager;
+    private GameObject              curObj;
+    private GameObject              selectObj;
+    private bool                    isValid;
+    private string                  path = "RoomItem.json";
 
     public GameObject[]             prefabs;
     public GameObject               cover;
     public GameObject               pivot;
-
     public Image                    inMove;
     public GameObject               outMove;
-
-    private GameObject              curObj;
-    private GameObject              selectObj;
-
-    private bool                    isValid;
-
     public List<Texture2D>          thumbnailList = new List<Texture2D>();
 
+
+    public eItemState               itemState;
     public enum eItemState
     {
         idle,
         move,
     }
-    public eItemState               itemState;
 
-    private string                  path = "RoomItem.json";
 
-    public delegate void RoomItem(int idx);
-    public RoomItem                 InitRoomItem; //룸아이템 초기셋업
-    public RoomItem                 MinusRoomItem; //룸아이템 빼서 인벤아이템에 추가
+    public delegate void IntParam(int i);
+    public IntParam                 handlerInitRoomItem; //룸아이템 초기셋업
+    public IntParam                 handlerPlusInvenItem; //룸아이템 빼서 인벤아이템에 추가
 
-    public delegate void InvenLock(bool bLock);
-    public InvenLock                invenLock;
-
-    public TouchInputController     touchInputController;
+    public delegate void BoolParam(bool b);
+    public BoolParam                handlerInvenLock;
+    public BoolParam                handlerMoveRoomObject;
 
     #endregion
 
@@ -72,9 +68,6 @@ public class GridSystem : MonoBehaviour
         if (curObj != null)
         {
             pivot.transform.position = new Vector3(curObj.transform.position.x, 0f, curObj.transform.position.z);
-        }
-        if (curObj != null)
-        {
             return;
         }
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition, Camera.MonoOrStereoscopicEye.Mono);
@@ -86,16 +79,18 @@ public class GridSystem : MonoBehaviour
                 {
                     selectObj = hit.transform.gameObject;
                 }
-                if (Input.GetMouseButtonUp(0))
-                {
-                    if (selectObj == hit.transform.gameObject)
-                    {
-                        SelectRoomItem(hit.transform.gameObject);
-                    }
-                    selectObj = null;
-                }
             }
         }
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (selectObj != null && hit.transform.gameObject != null && selectObj == hit.transform.gameObject 
+                && !MyRoomManager.instance.GetMousePressedMove())
+            {
+                SelectRoomItem(selectObj);
+            }
+            selectObj = null;
+        }
+
     }
     #endregion
 
@@ -106,9 +101,9 @@ public class GridSystem : MonoBehaviour
     public void OnClick_Inven()
     {
         ItemType itemType = ItemDatabase.instance.GetItemType(curObj.name);
-        MinusRoomItem(itemType.itemId);
 
-        invenLock?.Invoke(false);
+        handlerPlusInvenItem?.Invoke(itemType.itemId);
+        handlerInvenLock?.Invoke(false);
         cover.SetActive(false);
         pivot.SetActive(false);
         curObj = null;
@@ -120,11 +115,13 @@ public class GridSystem : MonoBehaviour
     /// </summary>
     public void OnClick_MoveDown()
     {
-        inMove.raycastTarget = false; //타겟날리고
-        outMove.SetActive(false); //무브제외 비활성화
+        inMove.raycastTarget = false; //타겟날리고(그리드이동을위해)
         cover.SetActive(false); //누를때만 커버꺼서 움직이게하기
-        SetTouchInputController(false); //터치이동 죽이기
+        outMove.SetActive(false); //무브버튼 비활성화
+        handlerMoveRoomObject?.Invoke(false);//터치이동 죽이기
     }
+
+
 
     /// <summary>
     /// 버튼_오브젝트 이동 끝
@@ -132,9 +129,9 @@ public class GridSystem : MonoBehaviour
     public void OnClick_MoveUp()
     {
         inMove.raycastTarget = true;
-        outMove.SetActive(true);
         cover.SetActive(true);
-        SetTouchInputController(true);
+        outMove.SetActive(true);
+        handlerMoveRoomObject?.Invoke(true);
     }
 
     /// <summary>
@@ -167,7 +164,7 @@ public class GridSystem : MonoBehaviour
         //기본세팅
         cover.SetActive(false);
         pivot.SetActive(false);
-        invenLock?.Invoke(false);
+        handlerInvenLock?.Invoke(false);
 
         //아이템 배치왼료
         GridManagerAccessor.GridManager.ConfirmPlacement();
@@ -200,7 +197,7 @@ public class GridSystem : MonoBehaviour
     private void SelectRoomItem(GameObject obj)
     {
         //그리드를 위한 기본세팅
-        invenLock?.Invoke(true);
+        handlerInvenLock?.Invoke(true);
         cover.SetActive(true);
         pivot.SetActive(true);
 
@@ -226,6 +223,11 @@ public class GridSystem : MonoBehaviour
 
 
 
+    /// <summary>
+    /// 안드로이드일때와 에디터모드일때 패스 구하기
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
     private string GetPath(string path)
     {
         string oriPath = Path.Combine(Application.streamingAssetsPath, path);
@@ -264,7 +266,7 @@ public class GridSystem : MonoBehaviour
         {
             _SaveData _saveData = _gridData._saveDatas[i];
             RoomItemInit(_saveData._gridObjectSaveDatas);
-            SelectedGridManager(_saveData.gridId);
+            SelectedGridManager(_saveData.gridId); //그리드 셋업
             gridSaveManager.HandleLoadGridObjectsPressed(_gridData._saveDatas[i]);
         }
     }
@@ -277,8 +279,8 @@ public class GridSystem : MonoBehaviour
     {
         for (int i = 0; i < _GridObjectSaveDatas.Count; i++)
         {
-            int itemId = ItemDatabase.instance.db_ItemType.FirstOrDefault(x => x.Value.prefabName == _GridObjectSaveDatas[i].prefabName).Key;
-            InitRoomItem?.Invoke(itemId);
+            int itemId = ItemDatabase.instance.GetItemType(_GridObjectSaveDatas[i].prefabName).itemId;
+            handlerInitRoomItem?.Invoke(itemId);
         }
     }
     #endregion
@@ -306,14 +308,6 @@ public class GridSystem : MonoBehaviour
         GridManagerAccessor.GridManager.HandleGridObjectRotated();
     }
 
-    /// <summary>
-    /// 터치인풋컨트롤러 활성화/비활성화 : 카메라회전,이동,줌 제어용
-    /// </summary>
-    /// <param name="enable"></param>
-    private void SetTouchInputController(bool enable)
-    {
-        touchInputController.enabled = enable;
-    }
 
     /// <summary>
     /// 그리드 선택

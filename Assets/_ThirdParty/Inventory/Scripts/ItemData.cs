@@ -68,7 +68,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     /// <param name="itemId"></param>
     void OnClick_InvenItemMinus(int itemId)
     {
-        inven.MinusInvenItem(itemId);
+        inven.handlerPlusRoomItem(itemId);
     }
 
     public enum eItemState

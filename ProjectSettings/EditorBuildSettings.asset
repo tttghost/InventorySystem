@@ -5,11 +5,14 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/_Dev/Scenes/Scene_Cinemachine.unity
     guid: de5e9ea368c4bfb46ae2357e63a77c87
   - enabled: 0
     path: Assets/mobile_touch_camera/scenes/demo_scene_top_down.unity
     guid: 2d1020eef5989ce4490765f06f3bdc8d
+  - enabled: 1
+    path: Assets/_Dev/Scenes/Scene_MyRoom.unity
+    guid: 9f606f1e76f103a4bba4cc1f4eeb20c7
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 9b370e06c5dc32b42a59a96259d5de2f, type: 2}
