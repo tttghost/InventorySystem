@@ -3,7 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Test_A : MonoBehaviour
+/// <summary>
+/// 시네머신 회전 테스트
+/// </summary>
+public class Test_CinemachineRotate : MonoBehaviour
 {
     public Transform target;
     public Camera camera;

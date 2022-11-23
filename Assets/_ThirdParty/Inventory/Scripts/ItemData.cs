@@ -12,16 +12,16 @@ using UnityEngine.UI;
 public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerDownHandler, IPointerExitHandler, IPointerUpHandler, IPointerClickHandler, IPointerEnterHandler
 {
 
-    private InventorySystem inv;
-    private ItemDatabase database;
+    private InventorySystem inven;
+    //private /*ItemDatabase*/ database;
+    //private Tooltip tooltip;
+    private Vector2 offset;
+    private Coroutine coroutine;
 
     public InvenItem invenItem { private set ; get; } //인벤토리
     public Text txt_Stack;
     public string category; //아이템 카테고리
     
-    private Tooltip tooltip;
-    private Vector2 offset;
-    private Coroutine coroutine;
 
     //슬롯아이디
     private int _slotId;
@@ -37,7 +37,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
                 gameObject.SetActive(false);
                 return;
             }
-            Slot slot = inv.slotList[slotId];
+            Slot slot = inven.slotList[slotId];
             slot.itemId = invenItem.itemId;
             transform.SetParent(slot.transform, false);
             transform.localPosition = Vector3.zero;
@@ -56,7 +56,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             _leftStack = value;
             if (value == 0)
             {
-                inv.RemoveItem(this);
+                inven.RemoveItem(this);
             }
             txt_Stack.text = _leftStack.ToString();
         }
@@ -68,7 +68,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     /// <param name="itemId"></param>
     void OnClick_InvenItemMinus(int itemId)
     {
-        inv.MinusInvenItem(itemId);
+        inven.MinusInvenItem(itemId);
     }
 
     public enum eItemState
@@ -118,13 +118,6 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     }
 
 
-    void Awake()
-    {
-        database = ItemDatabase.instance;
-        inv = GameObject.Find("InventorySystem").GetComponent<InventorySystem>();
-        tooltip = inv.GetComponent<Tooltip>();
-    }
-
     public static Sprite Tex2Sprite(Texture2D _tex)
     {
         return Sprite.Create(_tex, new Rect(0, 0, _tex.width, _tex.height), new Vector2(0.5f, 0.5f));
@@ -135,16 +128,16 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     /// </summary>
     /// <param name="slotId"></param>
     /// <param name="invenItem"></param>
-    public void SetItemData(int slotId, InvenItem invenItem)
+    public void SetItemData(InventorySystem inventorySystem, int slotId, InvenItem invenItem)
     {
+        inven = inventorySystem;
         this.invenItem = invenItem;
-        ItemType itemType = database.GetItemType(invenItem.itemId);
+        ItemType itemType = ItemDatabase.instance.GetItemType(invenItem.itemId);
         leftStack = this.invenItem.stack;
         gameObject.name = "Item: " + itemType.title;
         category = itemType.categoryType.ToString();
-        //transform.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/Items/" + itemType.slug);
-        transform.GetComponent<Image>().sprite = Tex2Sprite(ItemDatabase.instance.test_Grid.thumbnailList[slotId]);
-        if (inv.categoryType != -1 || inv.categoryType == itemType.categoryType)
+        transform.GetComponent<Image>().sprite = Tex2Sprite(MyRoomManager.instance.gridSystem.thumbnailList[slotId]);
+        if (inven.categoryType != -1 || inven.categoryType == itemType.categoryType)
         {
             this.slotId = slotId;
         }
@@ -209,8 +202,8 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         }
         itemState = eItemState.idle;
 
-        this.transform.SetParent(inv.slotList[slotId].transform);
-        this.transform.position = inv.slotList[slotId].transform.position;
+        this.transform.SetParent(inven.slotList[slotId].transform);
+        this.transform.position = inven.slotList[slotId].transform.position;
 
         GetComponent<CanvasGroup>().blocksRaycasts = true;
     }
@@ -226,7 +219,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         offset = eventData.position - new Vector2(this.transform.position.x, this.transform.position.y);
     }
 
-    void StartPress()
+    private void StartPress()
     {
         StopPress();
         coroutine = StartCoroutine(Co_StartHolding());
@@ -277,7 +270,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        tooltip.Activate(database.GetItemType(invenItem.itemId));
+        inven.tooltip.Activate(ItemDatabase.instance.GetItemType(invenItem.itemId));
     }
 
     /// <summary>
@@ -286,7 +279,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     /// <param name="eventData"></param>
     public void OnPointerExit(PointerEventData eventData)
     {
-        tooltip.Deactivate();
+        inven.tooltip.Deactivate();
     }
 
     public void OnPointerClick(PointerEventData eventData)

@@ -4,17 +4,15 @@ using UnityEngine.UI;
 
 public class Tooltip : MonoBehaviour
 {
-	private ItemType itemType;
-	private string data;
 	private GameObject tooltip;
 
-	void Start()
+	private void Start()
 	{
 		tooltip = GameObject.Find("go_Tooltip");
-		tooltip.SetActive(false);
+		Deactivate();
 	}
 
-	void Update()
+	private void Update()
 	{
 		if (tooltip.activeSelf)
 		{
@@ -24,8 +22,7 @@ public class Tooltip : MonoBehaviour
 
 	public void Activate(ItemType itemType)
 	{
-		this.itemType = itemType;
-		ConstructDataString();
+		ConstructDataString(itemType);
 		tooltip.SetActive(true);
 	}
 
@@ -34,9 +31,12 @@ public class Tooltip : MonoBehaviour
 		tooltip.SetActive(false);
 	}
 
-	public void ConstructDataString()
+	private void ConstructDataString(ItemType itemType)
 	{
-		data = "<color=#FFEC58FF><b>" + itemType.title+ "</b></color>\n\n" + itemType.description
+		string data = "<color=#FFEC58FF><b>" 
+			+ itemType.title
+			+ "</b></color>\n\n" 
+			+ itemType.description
 			+ "\nPower: " + itemType.slug;
 		tooltip.transform.GetChild(0).GetComponent<Text>().text = data;
 	}

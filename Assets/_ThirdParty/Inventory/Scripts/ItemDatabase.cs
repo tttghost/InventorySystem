@@ -17,16 +17,17 @@ public class ItemDatabase : MonoBehaviour
     public Dictionary<int, ItemType> db_ItemType = new Dictionary<int, ItemType>();
     public List<InvenItem> db_InvenItem = new List<InvenItem>();
     public List<RoomItem> db_RoomItem = new List<RoomItem>();
-    public GridSystem test_Grid;
+
+    private string subPath = "InvenItem.json";
+
     private void Awake()
     {
         instance = this;
         //LoadDB();
     }
 
-    string subPath = "InvenItem.json";
 
-    string GetPath(string subPath)
+    private string GetPath(string subPath)
     {
         string oriPath = Path.Combine(Application.streamingAssetsPath, subPath);
 #if UNITY_ANDROID
@@ -61,20 +62,58 @@ public class ItemDatabase : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// gridId로 그리드타입 추출
+    /// </summary>
+    /// <param name="gridId"></param>
+    /// <returns></returns>
     public GridType GetGridType(int gridId)
     {
         return db_GridType[gridId];
     }
 
+    /// <summary>
+    /// prefabName으로 그리드타입 추출
+    /// </summary>
+    /// <param name="prefabName"></param>
+    /// <returns></returns>
+    public GridType GetGridType(string prefabName)
+    {
+        return db_GridType.FirstOrDefault(x => x.Value.gridId == GetItemType(prefabName).gridId).Value;
+    }
+
+    /// <summary>
+    /// prefabName으로 아이템타입 추출
+    /// </summary>
+    /// <param name="prefabName">프리팹이름</param>
+    /// <returns></returns>
+    public ItemType GetItemType(string prefabName)
+    {
+        return db_ItemType.FirstOrDefault(x => x.Value.prefabName == prefabName).Value;
+    }
+
+    /// <summary>
+    /// itemId로 아이템타입 추출
+    /// </summary>
+    /// <param name="itemId">아이템아이디</param>
+    /// <returns></returns>
     public ItemType GetItemType(int itemId)
     {
         return db_ItemType[itemId];
     }
 
+    /// <summary>
+    /// itemId로  인벤아이템 추출
+    /// </summary>
+    /// <param name="itemId"></param>
+    /// <returns></returns>
     public InvenItem GetInvenItem(int itemId)
     {
         return db_InvenItem.FirstOrDefault(x => x.itemId == itemId);
     }
+
+   
+
 
 }
 

@@ -6,18 +6,20 @@ using System.Linq;
 
 public class InventorySystem : MonoBehaviour
 {
-    public GameObject inventoryItem;
-    public GameObject inventorySlot;
     [HideInInspector] public List<Slot> slotList = new List<Slot>(); //슬롯리스트 - 
     [HideInInspector] public List<ItemData> itemDataList = new List<ItemData>(); //인벤아이템리스트 - 
-    public int slotAmount = 16;
-    public int categoryType;
-    public delegate void InvenItem(int idx);
-    public InvenItem MinusInvenItem; //룸아이템 생성
+    [HideInInspector] public Tooltip tooltip;
+    
+    public GameObject       inventoryItem;
+    public GameObject       inventorySlot;
+    public int              slotAmount = 16;
+    public int              categoryType;
+    public Image            img_Block;
+    
+    public delegate void InvenItemHandler(int idx);
+    public InvenItemHandler MinusInvenItem; //룸아이템 생성
 
-    public Image img_Block;
-
-    public void SetInvenLock(bool bLock)
+    public void OnInvenLock(bool bLock)
     {
         img_Block.enabled = bLock;
     }
@@ -81,6 +83,11 @@ public class InventorySystem : MonoBehaviour
     }
 
     #region 유니티 함수
+    private void Awake()
+    {
+        tooltip = gameObject.AddComponent<Tooltip>();
+    }
+
     /// <summary>
     /// 스타트
     /// </summary>
@@ -116,37 +123,6 @@ public class InventorySystem : MonoBehaviour
         InitSlot(); //슬롯초기화
         InitItem(); //아이템초기화
         OnValueChanged_Tab(-1);
-    }
-
-    /// <summary>
-    /// 업데이트
-    /// </summary>
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            SortItem();
-        }
-        //if (Input.GetKeyDown(KeyCode.Alpha2))
-        //{
-        //    CreateOrAddItem(0);
-        //    OnValueChanged_Tab(categoryIdx);
-        //}
-        //if (Input.GetKeyDown(KeyCode.Alpha3))
-        //{
-        //    CreateOrAddItem(101);
-        //    OnValueChanged_Tab(categoryIdx);
-        //}
-        //if (Input.GetKeyDown(KeyCode.Alpha2)) //증가
-        //{
-        //    slotList[itemDataList[4].slotId].itemId = -1;
-        //    itemDataList[4].slotId++;
-        //}
-        //if (Input.GetKeyDown(KeyCode.Alpha3)) //감소
-        //{
-        //    slotList[itemDataList[4].slotId].itemId = -1;
-        //    itemDataList[4].slotId--;
-        //}
     }
     #endregion
 
@@ -189,13 +165,13 @@ public class InventorySystem : MonoBehaviour
     /// 아이템 생성 / 추가
     /// </summary>
     /// <param name="itemData"></param>
-    public void PlusInvenItem(int itemId)
+    public void OnPlusInvenItem(int itemId)
     {
         SortItem();
         ItemData findItemData = itemDataList.FirstOrDefault(x => x.invenItem.itemId == itemId);
         if (findItemData == null)
         {   //해당아이템이 없다면 -> 새로추가
-            CreateItem(new global::InvenItem(itemId, 10), slotList.FindIndex(x => x.itemId == -1));
+            CreateItem(new InvenItem(itemId, 10), slotList.FindIndex(x => x.itemId == -1));
         }
         else
         {   //만약 해당아이템이 있다면 -> 수량추가
@@ -208,13 +184,13 @@ public class InventorySystem : MonoBehaviour
     /// </summary>
     /// <param name="invenItem">아이템종류</param>
     /// <param name="slotId">어떤슬롯에 추가될 것인지</param>
-    private void CreateItem(global::InvenItem invenItem, int slotId)
+    private void CreateItem(InvenItem invenItem, int slotId)
     {
         Slot slot = slotList[slotId];
         slot.itemId = invenItem.itemId;
 
         ItemData itemData = Instantiate(inventoryItem).GetComponent<ItemData>();
-        itemData.SetItemData(slotId, invenItem);
+        itemData.SetItemData(this, slotId, invenItem);
         itemDataList.Add(itemData);
     }
     #endregion
@@ -271,10 +247,10 @@ public class InventorySystem : MonoBehaviour
     }
 
     /// <summary>
-    /// 인벤토리에서 아이템 감소 -> leftStack이 0이 되면 제거
+    /// 이벤트_인벤토리에서 아이템 감소 -> leftStack이 0이 되면 제거
     /// </summary>
     /// <param name="itemIdx"></param>
-    public void InitInvenItem(int itemIdx)
+    public void OnInitRoomItem(int itemIdx)
     {
         ItemData itemData = itemDataList.FirstOrDefault(x => x.invenItem.itemId == itemIdx);
         itemData.leftStack--;
