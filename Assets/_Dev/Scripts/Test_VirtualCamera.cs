@@ -12,7 +12,7 @@ public class Test_VirtualCamera : MonoBehaviour
     public CinemachineVirtualCamera[] cinemachineVirtualCamera;
     public Transform dollyPath;
 
-    public InventoryManager inventoryManager;
+    public MyRoomManager inventoryManager;
 
     public int idx = 0;
     private void Start()

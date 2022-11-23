@@ -97,7 +97,7 @@ public class GridSystem : MonoBehaviour
             mesh.mesh = curObj.GetComponent<MeshFilter>().mesh;
 
             var renderer = ghostObj.AddComponent<MeshRenderer>();
-            renderer.material = mat_Ghost;
+            renderer.material = Instantiate(mat_Ghost);
         }
     }
     GameObject ghostObj;

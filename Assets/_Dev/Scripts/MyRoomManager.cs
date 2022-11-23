@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InventoryManager : MonoBehaviour
+public class MyRoomManager : MonoBehaviour
 {
     public InventorySystem inventorySystem;
     public GridSystem gridSystem;
@@ -44,7 +44,7 @@ public class InventoryManager : MonoBehaviour
         inventorySystem.MinusInvenItem += gridSystem.PlusRoomItem; //인벤에서 아이템이 빠지면 룸에 아이템 추가
         gridSystem.MinusRoomItem += inventorySystem.PlusInvenItem; //룸에서 아이템이 빠지면 인벤에 아이템 추가
 
-        gridSystem.invenLock += inventorySystem.SetInvenLock;
+        gridSystem.invenLock += inventorySystem.SetInvenLock; // 아이템 선택되었을때 인벤 락
     }
 
     private void OnDisable()
