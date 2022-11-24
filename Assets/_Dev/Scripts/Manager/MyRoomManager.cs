@@ -10,32 +10,35 @@ public class MyRoomManager : MonoBehaviour
     public ControllerSystem controllerSystem;
     public InventorySystem inventorySystem;
     public GridSystem gridSystem;
-
-    public MobileTouchCamera touchCamera;
-    public TouchInputController touchController;
+    public Camera mainCamera;
+    private MobileTouchCamera touchCamera;
+    private TouchInputController touchController;
 
 
     private void Awake()
     {
         instance = this;
         gameObject.AddComponent<ItemDatabase>();
+
+        touchCamera = mainCamera.GetComponent<MobileTouchCamera>();
+        touchController = mainCamera.GetComponent<TouchInputController>();
     }
 
     private IEnumerator Start()
     {
         yield return null;
-        Load();
+        OnClick_Load();
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
-            Save();
+            OnClick_Save();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
-            Load();
+            OnClick_Load();
         }
         CheckMousePressedMove();
     }
@@ -84,7 +87,7 @@ public class MyRoomManager : MonoBehaviour
         gridSystem.handlerInvenLock += inventorySystem.OnInvenLock; // 아이템 선택되었을때 인벤 락
 
         controllerSystem.handlerPanelPressed += OnTouchInputController;
-        gridSystem.handlerMoveRoomObject += OnTouchInputController;
+        gridSystem.handlerMoveRoomObject +=  OnTouchInputController;
     }
 
    
@@ -98,16 +101,42 @@ public class MyRoomManager : MonoBehaviour
 
         gridSystem.handlerInvenLock -= inventorySystem.OnInvenLock;
 
-        gridSystem.handlerMoveRoomObject -= OnTouchInputController;
         controllerSystem.handlerPanelPressed -= OnTouchInputController;
+        gridSystem.handlerMoveRoomObject -= OnTouchInputController;
     }
 
-    private void Save()
+    public void OnClick_ResetCamera()
+    {
+        StartCoroutine(Co_OnClick_ResetCamera());
+    }
+
+    private IEnumerator Co_OnClick_ResetCamera()
+    {
+        mainCamera.transform.eulerAngles = Vector3.right * 90f;
+        //yield return Co_Rotation(mainCamera.transform, 90f);
+        yield return null;
+        mainCamera.transform.position = Vector3.up * touchCamera.CamZoomMax;
+    }
+
+    private IEnumerator Co_Rotation(Transform tr, float targetRot)
+    {
+        float oriRot = tr.eulerAngles.x;
+        float curTime = 0f;
+        float durTime = 1f;
+        while (curTime < 1f)
+        {
+            curTime += Time.deltaTime / durTime;
+            mainCamera.transform.eulerAngles = Vector3.right * Mathf.Lerp(oriRot, targetRot, curTime);
+            yield return null;
+        }
+    }
+
+    public void OnClick_Save()
     {
         gridSystem.Save();
     }
 
-    private void Load()
+    public void OnClick_Load()
     {
         ItemDatabase.instance.LoadDB(); //디비로드후
         inventorySystem.Init(); //인벤토리 초기화

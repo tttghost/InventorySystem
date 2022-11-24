@@ -21,13 +21,13 @@ public class ControllerSystem : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !IsMouseOverPanel(target))
-        {
-            handlerPanelPressed?.Invoke(isPanelPressed = true);
-        }
-        else if(Input.GetMouseButtonUp(0) && isPanelPressed)
+        if (Input.GetMouseButtonDown(0) && IsMouseOverPanel(target))
         {
             handlerPanelPressed?.Invoke(isPanelPressed = false);
+        }
+        else if(Input.GetMouseButtonUp(0) && !isPanelPressed)
+        {
+            handlerPanelPressed?.Invoke(isPanelPressed = true);
         }
 
     }
