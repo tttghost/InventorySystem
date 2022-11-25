@@ -17,6 +17,7 @@ public class ItemDatabase : MonoBehaviour
     public Dictionary<int, ItemType> db_ItemType = new Dictionary<int, ItemType>();
     public List<InvenItem> db_InvenItem = new List<InvenItem>();
     public List<RoomItem> db_RoomItem = new List<RoomItem>();
+    public List<PlayerInfo> db_PlayerInfo = new List<PlayerInfo>();
 
     private string subPath = "InvenItem.json";
 
@@ -58,6 +59,7 @@ public class ItemDatabase : MonoBehaviour
                 case "ItemType": db_ItemType = JsonConvert.DeserializeObject<ItemType[]>(data).ToDictionary(x => x.itemId, x => x); break;
                 case "InvenItem": db_InvenItem = JsonConvert.DeserializeObject<InvenItem[]>(data).ToList(); break;
                 case "RoomItem": db_RoomItem = JsonConvert.DeserializeObject<RoomItem[]>(data).ToList(); break;
+                case "PlayerInfo": db_PlayerInfo = JsonConvert.DeserializeObject<PlayerInfo[]>(data).ToList(); break;
             }
         }
     }
@@ -193,4 +195,14 @@ public class RoomItem
     public int x { get; set; }
     public int z { get; set; }
     public int rotate { get; set; }
+}
+
+/// <summary>
+/// 룸아이템 정보
+/// </summary>
+[Serializable]
+public class PlayerInfo
+{
+    public int freemoney { get; set; }
+    public int paidmoney { get; set; }
 }

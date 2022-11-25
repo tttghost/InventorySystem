@@ -1,4 +1,10 @@
 {
+  "PlayerInfo": [
+    {
+      "freemoney": 10000,
+      "paidmoney": 10000
+    }
+  ],
   "HomeType": [
     {
       "homeId": "Small",

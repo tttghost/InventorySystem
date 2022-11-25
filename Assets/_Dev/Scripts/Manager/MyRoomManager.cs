@@ -3,22 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MyRoomManager : MonoBehaviour
+public class MyRoomManager : Singleton<MyRoomManager>
 {
-    public static MyRoomManager instance;
+    public InventorySystem              inventorySystem;
+    public GridSystem                   gridSystem;
+    public Camera                       mainCamera;
+    private MobileTouchCamera           touchCamera;
+    private TouchInputController        touchController;
 
-    public ControllerSystem controllerSystem;
-    public InventorySystem inventorySystem;
-    public GridSystem gridSystem;
-    public Camera mainCamera;
-    private MobileTouchCamera touchCamera;
-    private TouchInputController touchController;
-    
+    //public delegate void BoolParam(bool b);
+    //public BoolParam                    handlerPanelPressed;
+
 
 
     private void Awake()
     {
-        instance = this;
         gameObject.AddComponent<ItemDatabase>();
 
         touchCamera = mainCamera.GetComponent<MobileTouchCamera>();
@@ -27,6 +26,8 @@ public class MyRoomManager : MonoBehaviour
 
     private IEnumerator Start()
     {
+       
+
         yield return null;
         OnClick_Load();
     }
@@ -80,32 +81,24 @@ public class MyRoomManager : MonoBehaviour
 
     private void OnEnable()
     {
-        gridSystem.handlerInitRoomItem += inventorySystem.OnInitRoomItem; //룸아이템, 인벤아이템 초기화 (인벤부터 개수 초기화 후 룸아이템개수만큼 차감하여 인벤표시)
-
-        inventorySystem.handlerPlusRoomItem += gridSystem.OnPlusRoomItem; //인벤아이템-, 룸아이템+
-        gridSystem.handlerPlusInvenItem += inventorySystem.OnPlusInvenItem; //룸아이템-, 인벤아이템+
-
-        gridSystem.handlerInvenLock += inventorySystem.OnInvenLock; // 아이템 선택되었을때 인벤 락
-
-        controllerSystem.handlerPanelPressed += OnTouchInputController; //특정 패널이 프레스 되었을 때 이동회전기능 제어
-        gridSystem.handlerMoveRoomObject +=  OnTouchInputController; //아이템을 옮길 때 이동회전기능 제어
-        gridSystem.handlerItemType += inventorySystem.OnItemType; //아이템을 선택했을 때 정보 출력
+        gridSystem.handlerInitRoomItem +=   inventorySystem.OnInitRoomItem; // 룸아이템,  인벤아이템 초기화 (인벤부터 개수 초기화 후 룸아이템개수만큼 차감하여 인벤표시)
+        inventorySystem.handlerPlusRoomItem += gridSystem.OnPlusRoomItem;   // 인벤아이템-, 룸아이템+
+        gridSystem.handlerPlusInvenItem += inventorySystem.OnPlusInvenItem; // 룸아이템-, 인벤아이템+
+        gridSystem.handlerMoveRoomObject +=  OnTouchInputController;        // 아이템 옮길 때 이동회전기능 제어
+        gridSystem.handlerItemType += inventorySystem.OnItemType;           // 아이템 선택했을 때 정보 출력
+        gridSystem.handlerInvenLock += inventorySystem.OnInvenLock;         // 아이템 선택했을 때 인벤 락
     }
 
-   
+
 
     private void OnDisable()
     {
         gridSystem.handlerInitRoomItem -= inventorySystem.OnInitRoomItem;
-
         inventorySystem.handlerPlusRoomItem -= gridSystem.OnPlusRoomItem;
         gridSystem.handlerPlusInvenItem -= inventorySystem.OnPlusInvenItem;
-
-        gridSystem.handlerInvenLock -= inventorySystem.OnInvenLock;
-
-        controllerSystem.handlerPanelPressed -= OnTouchInputController;
         gridSystem.handlerMoveRoomObject -= OnTouchInputController;
         gridSystem.handlerItemType -= inventorySystem.OnItemType;
+        gridSystem.handlerInvenLock -= inventorySystem.OnInvenLock;
     }
 
     public void OnClick_ResetCamera()
@@ -155,7 +148,7 @@ public class MyRoomManager : MonoBehaviour
     /// 터치인풋컨트롤러 활성화/비활성화 : 카메라회전,이동,줌 제어용
     /// </summary>
     /// <param name="enable"></param>
-    private void OnTouchInputController(bool enable)
+    public void OnTouchInputController(bool enable)
     {
         touchController.enabled = enable;
     }
