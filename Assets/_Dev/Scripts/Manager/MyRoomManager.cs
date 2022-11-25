@@ -13,6 +13,7 @@ public class MyRoomManager : MonoBehaviour
     public Camera mainCamera;
     private MobileTouchCamera touchCamera;
     private TouchInputController touchController;
+    
 
 
     private void Awake()
@@ -86,8 +87,9 @@ public class MyRoomManager : MonoBehaviour
 
         gridSystem.handlerInvenLock += inventorySystem.OnInvenLock; // 아이템 선택되었을때 인벤 락
 
-        controllerSystem.handlerPanelPressed += OnTouchInputController;
-        gridSystem.handlerMoveRoomObject +=  OnTouchInputController;
+        controllerSystem.handlerPanelPressed += OnTouchInputController; //특정 패널이 프레스 되었을 때 이동회전기능 제어
+        gridSystem.handlerMoveRoomObject +=  OnTouchInputController; //아이템을 옮길 때 이동회전기능 제어
+        gridSystem.handlerItemType += inventorySystem.OnItemType; //아이템을 선택했을 때 정보 출력
     }
 
    
@@ -103,6 +105,7 @@ public class MyRoomManager : MonoBehaviour
 
         controllerSystem.handlerPanelPressed -= OnTouchInputController;
         gridSystem.handlerMoveRoomObject -= OnTouchInputController;
+        gridSystem.handlerItemType -= inventorySystem.OnItemType;
     }
 
     public void OnClick_ResetCamera()
@@ -129,6 +132,11 @@ public class MyRoomManager : MonoBehaviour
             mainCamera.transform.eulerAngles = Vector3.right * Mathf.Lerp(oriRot, targetRot, curTime);
             yield return null;
         }
+    }
+
+    public void OnClick_InvenLock()
+    {
+        gridSystem.handlerInvenLock?.Invoke(!inventorySystem.img_Block.enabled);
     }
 
     public void OnClick_Save()

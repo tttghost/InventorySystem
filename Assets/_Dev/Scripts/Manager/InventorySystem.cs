@@ -3,11 +3,12 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class InventorySystem : MonoBehaviour
 {
-    [HideInInspector] public List<Slot> slotList = new List<Slot>(); //슬롯리스트 - 
-    [HideInInspector] public List<ItemData> itemDataList = new List<ItemData>(); //인벤아이템리스트 - 
+    [HideInInspector] public List<Slot> slotList = new List<Slot>(); //슬롯리스트
+    [HideInInspector] public List<ItemData> itemDataList = new List<ItemData>(); //인벤아이템리스트
     [HideInInspector] public Tooltip tooltip;
     
     public GameObject       inventoryItem;
@@ -15,15 +16,70 @@ public class InventorySystem : MonoBehaviour
     public int              slotAmount = 16;
     public int              categoryType;
     public Image            img_Block;
-    
+    public GameObject       img_DontSetup;
+
+    public Image            img_Title_Input;
+    public Text             txt_Title_Input;
+
     public delegate void InvenItemHandler(int idx);
     public InvenItemHandler handlerPlusRoomItem; //룸아이템 생성
 
+  
+
+    #region 유니티 함수
+    private void Awake()
+    {
+        tooltip = gameObject.AddComponent<Tooltip>();
+    }
+
+    /// <summary>
+    /// 스타트
+    /// </summary>
+    private void Start()
+    {
+        //Init();
+    }
+
+    /// <summary>
+    /// 루프를 돌리기위한 초기함수
+    /// </summary>
+    public void Init()
+    {
+        ClearData();
+        InitToggle(); //토글초기화
+        InitSlot(); //슬롯초기화
+        InitItem(); //아이템초기화
+        OnValueChanged_Tab(-1);
+    }
+    /// <summary>
+    /// 데이터 초기화
+    /// </summary>
+    private void ClearData()
+    {
+        foreach (var item in itemDataList)
+        {
+            Destroy(item.gameObject);
+        }
+        itemDataList.Clear();
+        foreach (var item in slotList)
+        {
+            Destroy(item.gameObject);
+        }
+        slotList.Clear();
+    }
+
+
+    #endregion
+
+
+    #region 콜백 함수
     public void OnInvenLock(bool bLock)
     {
         img_Block.enabled = bLock;
     }
+    #endregion
 
+    #region 토글
     /// <summary>
     /// 토글 초기화
     /// </summary>
@@ -82,51 +138,13 @@ public class InventorySystem : MonoBehaviour
         SortItem();
     }
 
-    #region 유니티 함수
-    private void Awake()
+    public void OnItemType(ItemType itemType)
     {
-        tooltip = gameObject.AddComponent<Tooltip>();
+        txt_Title_Input.text = itemType.title;
+        img_Title_Input.sprite = Util.Tex2Sprite(MyRoomManager.instance.gridSystem.thumbnailDic[itemType.prefabName]);
         
     }
-
-    /// <summary>
-    /// 스타트
-    /// </summary>
-    private void Start()
-    {
-        //Init();
-    }
-
-    /// <summary>
-    /// 데이터 초기화
-    /// </summary>
-    private void ClearData()
-    {
-        foreach (var item in itemDataList)
-        {
-            Destroy(item.gameObject);
-        }
-        itemDataList.Clear();
-        foreach (var item in slotList)
-        {
-            Destroy(item.gameObject);
-        }
-        slotList.Clear();
-    }
-
-    /// <summary>
-    /// 루프를 돌리기위한 초기함수
-    /// </summary>
-    public void Init()
-    {
-        ClearData();
-        InitToggle(); //토글초기화
-        InitSlot(); //슬롯초기화
-        InitItem(); //아이템초기화
-        OnValueChanged_Tab(-1);
-    }
     #endregion
-
 
 
     #region 초기화 (슬롯 / 아이템)

@@ -14,6 +14,15 @@ public class ControllerSystem : MonoBehaviour
     public delegate void BoolParam(bool b);
     public BoolParam handlerPanelPressed;
 
+    private void OnEnable()
+    {
+        MyRoomManager.instance.gridSystem.handlerInvenLock += MyRoomManager.instance.inventorySystem.OnInvenLock; // 아이템 선택되었을때 인벤 락
+    }
+    private void OnDisable()
+    {
+        MyRoomManager.instance.gridSystem.handlerInvenLock -= MyRoomManager.instance.inventorySystem.OnInvenLock;
+    }
+
     private void Start()
     {
         target = target == null ? (RectTransform)transform : target;

@@ -14,21 +14,21 @@ public class GridSystem : MonoBehaviour
 {
 
     #region 변수
-    private GridSaveManager_Custom  gridSaveManager;
-    private GameObject              curObj;
-    private GameObject              selectObj;
-    private bool                    isValid;
-    private string                  path = "RoomItem.json";
+    private GridSaveManager_Custom          gridSaveManager;
+    private GameObject                      curObj;
+    private GameObject                      selectObj;
+    private bool                            isValid;
+    private string                          path = "RoomItem.json";
 
-    public GameObject[]             prefabs;
-    public GameObject               cover;
-    public GameObject               pivot;
-    public Image                    inMove;
-    public GameObject               outMove;
-    public List<Texture2D>          thumbnailList = new List<Texture2D>();
+    public GameObject[]                     prefabs;
+    public GameObject                       cover;
+    public GameObject                       pivot;
+    public Image                            inMove;
+    public GameObject                       outMove;
+    public Dictionary<string, Texture2D>    thumbnailDic = new Dictionary<string, Texture2D>();
 
 
-    public eItemState               itemState;
+    public eItemState                       itemState;
     public enum eItemState
     {
         idle,
@@ -37,12 +37,15 @@ public class GridSystem : MonoBehaviour
 
 
     public delegate void IntParam(int i);
-    public IntParam                 handlerInitRoomItem; //룸아이템 초기셋업
-    public IntParam                 handlerPlusInvenItem; //룸아이템 빼서 인벤아이템에 추가
+    public IntParam                         handlerInitRoomItem; //룸아이템 초기셋업
+    public IntParam                         handlerPlusInvenItem; //룸아이템 빼서 인벤아이템에 추가
 
     public delegate void BoolParam(bool b);
-    public BoolParam                handlerInvenLock;
-    public BoolParam                handlerMoveRoomObject;
+    public BoolParam                        handlerInvenLock;
+    public BoolParam                        handlerMoveRoomObject;
+
+    public delegate void ItemTypeParam(ItemType itemType);
+    public ItemTypeParam                    handlerItemType;
 
     #endregion
 
@@ -54,7 +57,8 @@ public class GridSystem : MonoBehaviour
         gridSaveManager = gameObject.AddComponent<GridSaveManager_Custom>();
         for (int i = 0; i < prefabs.Length; i++)
         {
-            thumbnailList.Add(RuntimePreviewGenerator.GenerateModelPreview(prefabs[i].transform, 512, 512));
+            GameObject prefab = prefabs[i];
+            thumbnailDic.Add(prefab.name, RuntimePreviewGenerator.GenerateModelPreview(prefab.transform, 512, 512));
         }
     }
 
@@ -119,6 +123,7 @@ public class GridSystem : MonoBehaviour
         cover.SetActive(false); //누를때만 커버꺼서 움직이게하기
         outMove.SetActive(false); //무브버튼 비활성화
         handlerMoveRoomObject?.Invoke(false);//터치이동 죽이기
+        MyRoomManager.instance.inventorySystem.img_DontSetup.SetActive(false);
     }
 
 
@@ -158,6 +163,7 @@ public class GridSystem : MonoBehaviour
     {
         if (!isValid)
         {
+            MyRoomManager.instance.inventorySystem.img_DontSetup.SetActive(true);
             return;
         }
 
@@ -213,6 +219,7 @@ public class GridSystem : MonoBehaviour
         }
         SelectedGridManager(gridKey);
 
+        handlerItemType?.Invoke(ItemDatabase.instance.GetItemType(obj.name));
         //그리드 설치모드 진입
         GridManagerAccessor.GridManager.EnterPlacementMode(obj);
 

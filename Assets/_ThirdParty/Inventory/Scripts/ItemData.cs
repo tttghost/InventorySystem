@@ -118,10 +118,6 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     }
 
 
-    public static Sprite Tex2Sprite(Texture2D _tex)
-    {
-        return Sprite.Create(_tex, new Rect(0, 0, _tex.width, _tex.height), new Vector2(0.5f, 0.5f));
-    }
 
     /// <summary>
     /// 데이터 초기화
@@ -136,7 +132,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         leftStack = this.invenItem.stack;
         gameObject.name = "Item: " + itemType.title;
         category = itemType.categoryType.ToString();
-        transform.GetComponent<Image>().sprite = Tex2Sprite(MyRoomManager.instance.gridSystem.thumbnailList[slotId]);
+        transform.GetComponent<Image>().sprite = Util.Tex2Sprite(MyRoomManager.instance.gridSystem.thumbnailDic[itemType.prefabName]);
         if (inven.categoryType != -1 || inven.categoryType == itemType.categoryType)
         {
             this.slotId = slotId;
